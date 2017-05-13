@@ -7,14 +7,26 @@ import android.view.View;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private LoginLogic loginLogic;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        loginLogic = new LoginLogic(this);
+
+
     }
 
     public void createAccountBtnPushed(View v){
         Intent intent = new Intent(this, CreateAccountActivity.class);
         startActivity(intent);
+    }
+
+    public void loginBtnPushed(View v) {
+        loginLogic.abstractFieldData();
+        if (loginLogic.checkFieldData()) {
+            loginLogic.loginFirebaseAuth();
+        }
     }
 }

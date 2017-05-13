@@ -46,6 +46,16 @@ public class EnterFieldValidator {
         }
     }
 
+    boolean isPasswordTooShort(String password){
+        if(password.length() < 8){
+            errorCount += 1;
+            errorMsg += "パスワードは8文字以上です。";
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     boolean isNameBlank(String name){
         if(name.equals("") || name.length() == 0){
             errorMsg += "アカウント名を入力してください。\n";
