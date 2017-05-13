@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1009259265755",
+    "firebase_url": "https://chatbox-26a19.firebaseio.com",
+    "project_id": "chatbox-26a19",
+    "storage_bucket": "chatbox-26a19.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1009259265755:android:e3ac6eb587750f33",
+        "android_client_info": {
+          "package_name": "jp.techacademy.hideto.uetsuka.chatbox"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1009259265755-5pdpe489d6o85v5cpaon6so6q06jr20r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiGiYUXv78aFWmC2bidZZozd17bZRgJUw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

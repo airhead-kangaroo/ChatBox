@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">ChatBox</string>
+    <string name="mailAddressEnterField">メールアドレス</string>
+    <string name="passwordEnterField">パスワード</string>
+    <string name="passwordConfirmField">もう一度パスワード</string>
+    <string name="loginBtn">ログイン</string>
+    <string name="createAccountBtn">アカウント作成</string>
+    <string name="accountNameEnterField">アカウント名</string>
+    <string name="action_settings">Settings</string>
+</resources>
