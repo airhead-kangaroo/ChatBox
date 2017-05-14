@@ -2,8 +2,13 @@ package jp.techacademy.hideto.uetsuka.chatbox;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -14,18 +19,19 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
     private String userId;
     private LoginChecker checker;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        checker = new LoginChecker(this);
-        if(checker.isLogedin()){
-            userId = checker.getUserId();
-        }
+//        checker = new LoginChecker(this);
+//        if(checker.isLogedin()){
+//            userId = checker.getUserId();
+//        }
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -36,6 +42,37 @@ public class MainActivity extends AppCompatActivity {
 //                        .setAction("Action", null).show();
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.app_name, R.string.app_name);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+
+                switch (id){
+                    case R.id.enterRoom:
+                        Toast.makeText(MainActivity.this,"enter",Toast.LENGTH_LONG).show();
+                        //myIntent();
+                        break;
+                    case R.id.createRoom:
+                        Toast.makeText(MainActivity.this,"create",Toast.LENGTH_LONG).show();
+                        //myIntent();
+                        break;
+                    case R.id.manageRoom:
+                        Toast.makeText(MainActivity.this,"manage",Toast.LENGTH_LONG).show();
+                        //myIntent();
+                        break;
+                }
+                DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
+
+                return true;
             }
         });
     }
@@ -66,12 +103,17 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if(checker.isLogedin()){
-            userId = checker.getUserId();
-        }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        if(checker.isLogedin()){
+//            userId = checker.getUserId();
+//        }
+//
+//    }
 
+    private void myIntent(Class className){
+        Intent intent = new Intent(this, className);
+        startActivity(intent);
     }
 }

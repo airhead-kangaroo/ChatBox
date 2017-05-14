@@ -79,9 +79,9 @@ public class LoginLogic {
         this.name = name;
     }
 
-    void loginFirebaseAuth(){
-        auth.signInWithEmailAndPassword(mailAddress,password).addOnCompleteListener(getLoginListener());
-
+    void login(){
+        MyFirebaseAuth auth = new MyFirebaseAuth(activity);
+        auth.login(mailAddress,password);
     }
 
     void firstLogin(){
@@ -93,10 +93,6 @@ public class LoginLogic {
         SharedPreferences.Editor editor = sp.edit();
         editor.putString(ApplicationInfo.SHARED_PREFERENCES_NAME_KEY, userName);
         editor.apply();
-    }
-
-    FirebaseUser getFirebaseUser(){
-        return auth.getCurrentUser();
     }
 
     private OnCompleteListener<AuthResult> getLoginListener(){

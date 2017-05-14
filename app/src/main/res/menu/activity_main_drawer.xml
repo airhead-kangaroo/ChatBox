@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/enterRoom"
+            android:title="入室"/>
+        <item
+            android:id="@+id/createRoom"
+            android:title="部屋生成"/>
+        <item
+            android:id="@+id/manageRoom"
+            android:title="部屋管理"/>
+
+
+        </group>
+
+</menu>

@@ -4,16 +4,18 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 public class LoginActivity extends AppCompatActivity {
 
     private LoginLogic loginLogic;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        loginLogic = new LoginLogic(this);
+        //user = User.getInstance(this);
 
 
     }
@@ -24,9 +26,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void loginBtnPushed(View v) {
-        loginLogic.abstractFieldData();
-        if (loginLogic.checkFieldData()) {
-            loginLogic.loginFirebaseAuth();
+        if(!user.isLogedin()){
+            user.loginAccount();
+        }else{
+            Toast.makeText(this, "既にログインしています。ログインしなおすには一度ログアウトしてください。", Toast.LENGTH_LONG).show();
         }
     }
 }
