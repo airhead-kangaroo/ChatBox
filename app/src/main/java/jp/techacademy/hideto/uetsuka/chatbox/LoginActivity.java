@@ -8,17 +8,22 @@ import android.widget.Toast;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private LoginLogic loginLogic;
-    private User user;
+    private AccountController accountController;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        //user = User.getInstance(this);
+        accountController = new AccountController(this);
+        if(accountController.isLogedin()){
+            finish();
+        }
+
 
 
     }
+
 
     public void createAccountBtnPushed(View v){
         Intent intent = new Intent(this, CreateAccountActivity.class);
@@ -26,10 +31,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void loginBtnPushed(View v) {
-        if(!user.isLogedin()){
-            user.loginAccount();
-        }else{
-            Toast.makeText(this, "既にログインしています。ログインしなおすには一度ログアウトしてください。", Toast.LENGTH_LONG).show();
-        }
+        accountController.login();
     }
 }

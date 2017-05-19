@@ -6,12 +6,12 @@ import android.widget.Toast;
  * Created by Airhead-Kangaroo on 2017/05/13.
  */
 
-public class EnterFieldValidator {
+public class EntryFieldValidator {
 
     private String errorMsg;
     private int errorCount;
 
-    public EnterFieldValidator(){
+    public EntryFieldValidator(){
         errorMsg = "";
         errorCount = 0;
     }

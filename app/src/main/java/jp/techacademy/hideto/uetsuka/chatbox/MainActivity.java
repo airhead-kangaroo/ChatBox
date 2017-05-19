@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private String userId;
-    private LoginChecker checker;
+    private AccountController accountController;
     private Toolbar toolbar;
 
     @Override
@@ -27,12 +27,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-//        checker = new LoginChecker(this);
-//        if(checker.isLogedin()){
-//            userId = checker.getUserId();
-//        }
-
+        accountController = new AccountController(this);
+        accountController.checkLoginState();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -96,21 +92,18 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         if(id == R.id.logOut){
-            checker.logout();
+            accountController.logout();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        if(checker.isLogedin()){
-//            userId = checker.getUserId();
-//        }
-//
-//    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        accountController.checkLoginState();
+    }
 
     private void myIntent(Class className){
         Intent intent = new Intent(this, className);

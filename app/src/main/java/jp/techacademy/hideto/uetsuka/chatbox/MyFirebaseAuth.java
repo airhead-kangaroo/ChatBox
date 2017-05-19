@@ -8,6 +8,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 /**
  * Created by Airhead-Kangaroo on 2017/05/14.
@@ -15,26 +16,33 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class MyFirebaseAuth {
 
-    private static MyFirebaseAuth myFirebaseAuth;
     private FirebaseAuth auth;
-    private Activity activity;
+    private FirebaseMediator firebaseMediator;
     private String mailAddress;
     private String password;
-    private String name;
 
-    MyFirebaseAuth(Activity activity){
+    public enum ListenerInfo{normalLogin, firstLogin, createAccount}
+
+    MyFirebaseAuth(FirebaseMediator firebaseMediator){
         auth = FirebaseAuth.getInstance();
-        this.activity = activity;
+        this.firebaseMediator = firebaseMediator;
     }
 
+    String getCurrentUser(){
+        if(auth.getCurrentUser() != null){
+            return auth.getCurrentUser().getUid();
+        }else{
+            return null;
+        }
+    }
 
-    //Todo:引数の改良（ビルダーパターン的な感じで？）
-    //引数が両方ともStringなので、引数の順番間違いでエラーが起こる可能性。
-    //後ほど要対策
-    void createAccount(String mailAddress, String password, String name){
+    String getUserId(){
+        return auth.getCurrentUser().getUid();
+    }
+
+    void createAccount(String mailAddress, String password){
         this.mailAddress = mailAddress;
         this.password = password;
-        this.name = name;
         auth.createUserWithEmailAndPassword(mailAddress,password).addOnCompleteListener(getCreateAccountCompleteListener());
     }
 
@@ -44,7 +52,6 @@ public class MyFirebaseAuth {
 
     void logout(){
         auth.signOut();
-        UserInfo.isLogedin = false;
     }
 
 
@@ -56,7 +63,7 @@ public class MyFirebaseAuth {
                 if (task.isSuccessful()) {
                     auth.signInWithEmailAndPassword(mailAddress, password).addOnCompleteListener(getFirstLoginListener());
                 } else {
-                    Toast.makeText(activity, "アカウント作成に失敗しました", Toast.LENGTH_LONG).show();
+                    firebaseMediator.firebaseAuthCreateAccountListener(false);
                 }
             }
         };
@@ -67,10 +74,10 @@ public class MyFirebaseAuth {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-
+                    firebaseMediator.firebaseAuthFirstLoginListener(true);
 
                 } else {
-                    Toast.makeText(activity, "アカウント作成時のログイン処理に失敗しました", Toast.LENGTH_LONG).show();
+                    firebaseMediator.firebaseAuthFirstLoginListener(false);
                 }
             }
         };
@@ -80,10 +87,11 @@ public class MyFirebaseAuth {
         return new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()) {
-                    UserInfo.isLogedin = true;
-                }else{
-                    Toast.makeText(activity, "ログインに失敗しました", Toast.LENGTH_LONG).show();
+                if (task.isSuccessful()) {
+                    firebaseMediator.firebaseAuthLoginListener(true);
+
+                } else {
+                    firebaseMediator.firebaseAuthLoginListener(false);
                 }
             }
         };

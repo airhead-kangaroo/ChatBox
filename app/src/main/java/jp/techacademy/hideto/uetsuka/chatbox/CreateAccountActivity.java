@@ -8,14 +8,13 @@ import android.view.inputmethod.InputMethodManager;
 
 public class CreateAccountActivity extends AppCompatActivity {
 
-    private AccountCreator accountCreator;
-    private User user;
+    private AccountController accountController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
-        //User user = User.getInstance(this);
+        accountController = new AccountController(this);
         setTitle("アカウント作成");
 
     }
@@ -23,6 +22,6 @@ public class CreateAccountActivity extends AppCompatActivity {
     public void createAccountBtnPushed(View v){
         InputMethodManager im = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         im.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-        user.createAccount();
+        accountController.createAccount();
     }
 }

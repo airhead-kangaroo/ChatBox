@@ -10,8 +10,12 @@ import com.google.firebase.database.FirebaseDatabase;
 public class MyFirebaseDatabase {
 
     protected DatabaseReference databaseReference;
+    protected FirebaseMediator firebaseMediator;
 
-    MyFirebaseDatabase(){
+    public enum ListenerInfo{getUserName,setUserName,}
+
+    MyFirebaseDatabase(FirebaseMediator firebaseMediator){
         databaseReference = FirebaseDatabase.getInstance().getReference();
+        this.firebaseMediator = firebaseMediator;
     }
 }

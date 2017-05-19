@@ -18,15 +18,15 @@ import java.util.Map;
  * Created by Airhead-Kangaroo on 2017/05/14.
  */
 
-public class UsersDatabase extends MyFirebaseDatabase {
+public class FirebaseDatabaseUsers extends MyFirebaseDatabase {
 
     public static final String FIREBASE_USERS_PATH = "users";
     private String name;
     private Activity activity;
 
 
-    UsersDatabase(){
-        super();
+    FirebaseDatabaseUsers(FirebaseMediator firebaseMediator){
+        super(firebaseMediator);
     }
 
     void saveUserData(String userId, String name){
@@ -48,9 +48,9 @@ public class UsersDatabase extends MyFirebaseDatabase {
             @Override
             public void onComplete(@NonNull Task task) {
                 if(task.isSuccessful()){
-                    UserInfo.userName = name;
+                    firebaseMediator.firebaseDatabaseSetUserNameListener(true);
                 }else{
-                    Toast.makeText(activity, "ユーザー名登録に失敗しました", Toast.LENGTH_LONG).show();
+                    firebaseMediator.firebaseDatabaseSetUserNameListener(false);
                 }
             }
         };
@@ -61,7 +61,7 @@ public class UsersDatabase extends MyFirebaseDatabase {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Map data = (HashMap)dataSnapshot.getValue();
-                UserInfo.userName = data.get("name").toString();
+                firebaseMediator.firebaseDatabaseGetUserIdListener(data.get("name").toString());
             }
 
             @Override
