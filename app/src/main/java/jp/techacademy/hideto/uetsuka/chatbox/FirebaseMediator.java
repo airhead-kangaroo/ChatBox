@@ -7,6 +7,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Airhead-Kangaroo on 2017/05/18.
  */
@@ -17,6 +20,7 @@ public class FirebaseMediator {
     private MyFirebaseAuth myFirebaseAuth;
     private FirebaseListener firebaseListener;
     private FirebaseDatabaseUsers firebaseDatabaseUsers;
+    private FirebaseDatabaseRoom firebaseDatabaseRoom;
 
     public static final String USERS_PATH = "users";
 
@@ -93,6 +97,36 @@ public class FirebaseMediator {
         firebaseDatabaseUsers.saveUserData(userName,userId);
     }
 
+    void createRoom(String roomName,String roomId,String roomToken, String roomCapacity){
+        getFirebaseDatabaseRoom();
+        firebaseDatabaseRoom.createRoom(roomName,roomId,roomToken, roomCapacity);
+    }
+
+    //todo: room側にもメンバー追加処理
+    boolean addRoom(String userId, String roomId){
+        getFirebaseDatabaseUsers();
+        if(firebaseDatabaseUsers.addRoom(userId,roomId)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    void addMember(String userId, String roomId){
+        getFirebaseDatabaseRoom();
+        firebaseDatabaseRoom.addMember(userId,roomId);
+    }
+
+    void addMember(String userId, String roomId, String roomToken){
+        getFirebaseDatabaseRoom();
+        firebaseDatabaseRoom.addMember(userId,roomId,roomToken);
+    }
+
+    void loadRoomsData(String userId){
+        getFirebaseDatabaseUsers();
+        firebaseDatabaseUsers.loadRoomsData(userId);
+    }
+
 
     void firebaseDatabaseGetUserIdListener(String data){
         firebaseListener.firebaseDataBaseListener(MyFirebaseDatabase.ListenerInfo.getUserName, data);
@@ -106,9 +140,28 @@ public class FirebaseMediator {
         }
     }
 
+    void firebaseDatabaseCreateRoomListener(boolean isSuccess, String roomId){
+        if(isSuccess){
+            firebaseListener.firebaseDataBaseListener(MyFirebaseDatabase.ListenerInfo.createRoom, roomId);
+        }else{
+            firebaseListener.firebaseDataBaseListener(MyFirebaseDatabase.ListenerInfo.createRoom, null);
+        }
+    }
+
+    void firebaseDatabaseLoadRoomsDataListener(Map<String,String> data){
+        firebaseListener.firebaseDataBaseHashmapListener(MyFirebaseDatabase.ListenerInfo.loadRoomsData,data);
+    }
+
+
     private void getFirebaseDatabaseUsers(){
         if(firebaseDatabaseUsers == null){
             firebaseDatabaseUsers = new FirebaseDatabaseUsers(this);
+        }
+    }
+
+    private void getFirebaseDatabaseRoom(){
+        if(firebaseDatabaseRoom == null){
+            firebaseDatabaseRoom = new FirebaseDatabaseRoom(this);
         }
     }
 }

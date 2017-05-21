@@ -8,4 +8,10 @@
     <string name="createAccountBtn">アカウント作成</string>
     <string name="accountNameEnterField">アカウント名</string>
     <string name="action_settings">Settings</string>
+    <string name="roomName">部屋名</string>
+    <string name="roomId">部屋ID</string>
+    <string name="roomToken">トークン</string>
+    <string name="roomCapacity">制限人数</string>
+    <string name="createRoomNotice">部屋を生成します。\n部屋名には任意の部屋名を。\n部屋IDには、英数字で入室に使用する部屋IDを。\nトークンには部屋のカギ（パスワード）となる英数字を\n入力してください</string>
+
 </resources>

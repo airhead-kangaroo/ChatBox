@@ -12,7 +12,7 @@ public class MyFirebaseDatabase {
     protected DatabaseReference databaseReference;
     protected FirebaseMediator firebaseMediator;
 
-    public enum ListenerInfo{getUserName,setUserName,}
+    public enum ListenerInfo{getUserName,setUserName,createRoom,loadRoomsData,}
 
     MyFirebaseDatabase(FirebaseMediator firebaseMediator){
         databaseReference = FirebaseDatabase.getInstance().getReference();

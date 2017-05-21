@@ -1,5 +1,6 @@
 package jp.techacademy.hideto.uetsuka.chatbox;
 
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -57,12 +58,12 @@ public class MainActivity extends AppCompatActivity {
                         //myIntent();
                         break;
                     case R.id.createRoom:
-                        Toast.makeText(MainActivity.this,"create",Toast.LENGTH_LONG).show();
-                        //myIntent();
+                        DialogFragment fragment = new CreateRoomDialogFlagment();
+                        fragment.show(getFragmentManager(), "createRoom");
+
                         break;
                     case R.id.manageRoom:
-                        Toast.makeText(MainActivity.this,"manage",Toast.LENGTH_LONG).show();
-                        //myIntent();
+                        myIntent(RoomManagementActivity.class);
                         break;
                 }
                 DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer_layout);

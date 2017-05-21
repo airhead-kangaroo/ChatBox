@@ -7,6 +7,9 @@ import android.preference.PreferenceManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Airhead-Kangaroo on 2017/05/18.
  */
@@ -148,5 +151,10 @@ public class AccountController implements FirebaseListener{
                 }
                 break;
         }
+    }
+
+    @Override
+    public void firebaseDataBaseHashmapListener(MyFirebaseDatabase.ListenerInfo info, Map<String, String> data) {
+
     }
 }
