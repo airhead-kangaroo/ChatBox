@@ -30,10 +30,10 @@ public class RoomManagementActivity extends AppCompatActivity{
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(RoomManagementActivity.this, ((TextView)view.findViewById(R.id.roomManagementRoomName)).getText().toString(),Toast.LENGTH_LONG).show();
-//                Intent intent = new Intent(this, );
-//                intent.putExtra("roomName", ((TextView)view.findViewById(R.id.roomManagementRoomName)).getText().toString());
-//                startActivity(intent);
+                Intent intent = new Intent(RoomManagementActivity.this, RoomManagementOptionActivity.class);
+                intent.putExtra("roomName", ((TextView)view.findViewById(R.id.roomManagementRoomName)).getText().toString());
+                intent.putExtra("roomProperty", ((TextView)view.findViewById(R.id.roomManagementProperty)).getText().toString());
+                startActivity(intent);
             }
         });
 

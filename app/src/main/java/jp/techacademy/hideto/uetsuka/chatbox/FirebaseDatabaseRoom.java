@@ -52,6 +52,11 @@ public class FirebaseDatabaseRoom extends MyFirebaseDatabase {
         //処理追加　制限人数チェック　トークンチェック
     }
 
+    void deleteRoom(String roomName){
+        DatabaseReference roomRef = databaseReference.child(FIREBASE_ROOMS_PATH).child(roomName);
+        roomRef.removeValue();
+    }
+
 
 
 

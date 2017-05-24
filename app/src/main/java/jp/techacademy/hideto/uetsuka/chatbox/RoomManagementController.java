@@ -70,6 +70,12 @@ public class RoomManagementController implements FirebaseListener{
         firebaseMediator.loadRoomsData(userId);
     }
 
+    //todo: リスナー処理を入れ、両方が終了したらトースト出す
+    //ゲストのユーザーが持っている部屋情報をどうやって消すかが課題。
+    void deleteRoom(String roomName, String UserId){
+        firebaseMediator.deleteRoom(roomName, UserId);
+    }
+
     @Override
     public void firebaseAuthListener(MyFirebaseAuth.ListenerInfo info, boolean result) {
 

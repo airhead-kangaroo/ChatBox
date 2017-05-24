@@ -12,6 +12,10 @@
     <string name="roomId">部屋ID</string>
     <string name="roomToken">トークン</string>
     <string name="roomCapacity">制限人数</string>
+    <string name="deleteRoom">部屋消去</string>
+    <string name="dragOutMember">強制退室</string>
+    <string name="lockRoom">部屋ロック</string>
+    <string name="restartChat">チャット再開</string>
     <string name="createRoomNotice">部屋を生成します。\n部屋名には任意の部屋名を。\n部屋IDには、英数字で入室に使用する部屋IDを。\nトークンには部屋のカギ（パスワード）となる英数字を\n入力してください</string>
 
 </resources>

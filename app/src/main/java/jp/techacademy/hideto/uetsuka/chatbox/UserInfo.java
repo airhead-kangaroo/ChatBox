@@ -1,6 +1,8 @@
 package jp.techacademy.hideto.uetsuka.chatbox;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -29,6 +31,14 @@ public class UserInfo {
         SharedPreferences.Editor editor = sp.edit();
         editor.putString(SP_USERID_KEY, userId);
         editor.apply();
+    }
+
+    static void isLogin(Activity activity){
+        String userId = getUserId(activity);
+        if(userId == null || userId.equals("") || userId.length() == 0){
+            Intent intent = new Intent(activity, LoginActivity.class);
+            activity.startActivity(intent);
+        }
     }
 
 

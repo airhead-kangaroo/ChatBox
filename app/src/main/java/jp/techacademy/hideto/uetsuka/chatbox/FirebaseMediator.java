@@ -127,6 +127,13 @@ public class FirebaseMediator {
         firebaseDatabaseUsers.loadRoomsData(userId);
     }
 
+    void deleteRoom(String roomName, String UserId){
+        getFirebaseDatabaseRoom();
+        firebaseDatabaseRoom.deleteRoom(roomName);
+        getFirebaseDatabaseUsers();
+        firebaseDatabaseUsers.deleteRoom(roomName, UserId);
+    }
+
 
     void firebaseDatabaseGetUserIdListener(String data){
         firebaseListener.firebaseDataBaseListener(MyFirebaseDatabase.ListenerInfo.getUserName, data);

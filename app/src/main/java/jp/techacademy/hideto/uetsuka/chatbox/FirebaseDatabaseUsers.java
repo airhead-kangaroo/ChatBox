@@ -62,6 +62,11 @@ public class FirebaseDatabaseUsers extends MyFirebaseDatabase {
         userRef.addChildEventListener(getLoadRoomsDataListener());
     }
 
+    void deleteRoom(String roomName, String UserId){
+        DatabaseReference userRef = databaseReference.child(FIREBASE_USERS_PATH).child(UserId).child(FIREBASE_USERS_ROOMKEY).child(roomName);
+        userRef.removeValue();
+    }
+
 
     private OnCompleteListener getSaveValueListener(){
         return new OnCompleteListener() {
