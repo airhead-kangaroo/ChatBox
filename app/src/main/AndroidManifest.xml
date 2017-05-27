@@ -29,6 +29,10 @@
         </activity>
         <activity android:name=".RoomManagementOptionActivity">
         </activity>
+        <activity android:name=".ChatActivity">
+        </activity>
+        <activity android:name=".RoomMemberListViewActivity">
+        </activity>
     </application>
 
 </manifest>

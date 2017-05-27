@@ -31,16 +31,16 @@ public class MainActivity extends AppCompatActivity {
         accountController = new AccountController(this);
         accountController.checkLoginState();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+////                        .setAction("Action", null).show();
+//                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+//                startActivity(intent);
+//            }
+//        });
 
         DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.app_name, R.string.app_name);
@@ -54,13 +54,12 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (id){
                     case R.id.enterRoom:
-                        Toast.makeText(MainActivity.this,"enter",Toast.LENGTH_LONG).show();
-                        //myIntent();
+                        DialogFragment enterRoomDialogFlagment = new EnterRoomDialogFlagment();
+                        enterRoomDialogFlagment.show(getFragmentManager(), "enterRoom");
                         break;
                     case R.id.createRoom:
-                        DialogFragment fragment = new CreateRoomDialogFlagment();
-                        fragment.show(getFragmentManager(), "createRoom");
-
+                        DialogFragment createRoomDialogFlagment = new CreateRoomDialogFlagment();
+                        createRoomDialogFlagment.show(getFragmentManager(), "createRoom");
                         break;
                     case R.id.manageRoom:
                         myIntent(RoomManagementActivity.class);

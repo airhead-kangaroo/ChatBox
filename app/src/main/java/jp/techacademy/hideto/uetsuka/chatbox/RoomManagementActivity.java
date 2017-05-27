@@ -1,5 +1,6 @@
 package jp.techacademy.hideto.uetsuka.chatbox;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ public class RoomManagementActivity extends AppCompatActivity{
     private RoomManagementController roomManagementController;
     private RoomManagementAdapter adapter;
     private ListView list;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +29,10 @@ public class RoomManagementActivity extends AppCompatActivity{
         adapter = new RoomManagementAdapter(this);
         list = (ListView)findViewById(R.id.roomManagementListView);
         adapter.notifyDataSetChanged();
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("処理中...");
+
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -38,15 +44,8 @@ public class RoomManagementActivity extends AppCompatActivity{
         });
 
         roomManagementController = new RoomManagementController(this);
-        String userId = UserInfo.getUserId(this);
-        if(userId != null){
-            roomManagementController.loadRoomsData(UserInfo.getUserId(this));
-        }else{
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-        }
-
-
+        adapter.clear();
+        //roomManagementController.loadRoomsData(UserInfo.getUserId(this));
     }
 
     void addDataToAdapter(HashMap<String, String> data){
@@ -55,6 +54,14 @@ public class RoomManagementActivity extends AppCompatActivity{
         roomList.setRoomProperty(data.get("roomProperty"));
         adapter.add(roomList);
         list.setAdapter(adapter);
+        progressDialog.dismiss();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        progressDialog.show();
+        adapter.clear();
+        roomManagementController.loadRoomsData(UserInfo.getUserId(this));
+    }
 }

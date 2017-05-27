@@ -1,6 +1,8 @@
 package jp.techacademy.hideto.uetsuka.chatbox;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,41 +18,25 @@ public class RoomManagementController implements FirebaseListener{
 
     private Activity activity;
     private FirebaseMediator firebaseMediator;
-    private String roomNanme;
-    private String roomId;
-    private String roomToken;
-    private String roomCapacity;
+    private ProgressDialog progressDialog;
 
     RoomManagementController(Activity activity){
         this.activity = activity;
         firebaseMediator = new FirebaseMediator(activity,this);
     }
 
-    void setRoomName(String roomName){
-        this.roomNanme = roomName;
-    }
-
-    void setRoomId(String roomId) {
-        this.roomId = roomId;
-    }
-
-    void setRoomToken(String roomToken) {
-        this.roomToken = roomToken;
-    }
-
-    public void setRoomCapacity(String roomCapacity) {
-        this.roomCapacity = roomCapacity;
-    }
-
-    void createRoom(){
-        if(validateEntryField()){
-            firebaseMediator.createRoom(roomNanme,roomId,roomToken, roomCapacity);
+    void createRoom(String roomId, String roomToken, String roomCapacity){
+        progressDialog = new ProgressDialog(activity);
+        progressDialog.setMessage("処理中...");
+        progressDialog.show();
+        if(validateEntryFieldForRoomCreate(roomId, roomToken, roomCapacity)){
+            firebaseMediator.createRoom(roomId,roomToken, roomCapacity, UserInfo.getUserId(activity), UserInfo.getUserName(activity));
         }
     }
 
-    boolean validateEntryField(){
+    //todo : Validatorを性能ごとにクラスで分け、factoryパターンで生成するようにする
+    boolean validateEntryFieldForRoomCreate(String roomId, String roomToken, String roomCapacity){
         EntryFieldValidator validator = new EntryFieldValidator();
-        validator.isRoomNameBlank(roomNanme);
         validator.isRoomIdBlank(roomId);
         validator.isRoomTokenBlank(roomToken);
         validator.isRoomIdTooShort(roomId);
@@ -72,8 +58,27 @@ public class RoomManagementController implements FirebaseListener{
 
     //todo: リスナー処理を入れ、両方が終了したらトースト出す
     //ゲストのユーザーが持っている部屋情報をどうやって消すかが課題。
-    void deleteRoom(String roomName, String UserId){
-        firebaseMediator.deleteRoom(roomName, UserId);
+    void deleteRoom(String roomName){
+        firebaseMediator.deleteRoom(roomName, FirebaseMediator.DELETE_MODE.INIT);
+    }
+
+    void lockRoom(String roomId){
+        firebaseMediator.lockRoom(roomId);
+    }
+
+    void enterRoom(String roomId, String roomToken){
+        EntryFieldValidator validator = new EntryFieldValidator();
+        validator.isRoomIdBlank(roomId);
+        validator.isRoomTokenBlank(roomToken);
+        if(validator.getErrorCount() > 0){
+            Toast.makeText(activity, validator.getErrorMsg(),Toast.LENGTH_LONG).show();
+        }else {
+            firebaseMediator.enterRoom(roomId,roomToken,UserInfo.getUserId(activity),UserInfo.getUserName(activity));
+        }
+    }
+
+    void getUserList(String roomId){
+        firebaseMediator.getUserList(roomId);
     }
 
     @Override
@@ -85,22 +90,51 @@ public class RoomManagementController implements FirebaseListener{
     public void firebaseDataBaseListener(MyFirebaseDatabase.ListenerInfo info, String data) {
         switch (info){
             case createRoom:
+                progressDialog.dismiss();
                 if(data != null){
-                    if(firebaseMediator.addRoom(UserInfo.getUserId(activity),data)){
-                        Toast.makeText(activity,"部屋を生成しました。部屋IDは" + data + "です", Toast.LENGTH_LONG).show();
-                        firebaseMediator.addMember(UserInfo.getUserId(activity), data);
-                        //intentで部屋入室処理
+                    Toast.makeText(activity,"部屋を生成しました。部屋IDは" + data + "です", Toast.LENGTH_LONG).show();
                     }else{
                         Toast.makeText(activity, "部屋を生成しました。部屋IDは" + data + "です。部屋入室処理を行ってください", Toast.LENGTH_LONG).show();
                     }
-                }else{
-                    Toast.makeText(activity, "部屋生成に失敗しました", Toast.LENGTH_LONG).show();
-                }
+                break;
+            case enterRoomFail:
+                Toast.makeText(activity, data, Toast.LENGTH_LONG).show();
+                break;
+            case enterRoomSuccess:
+                Intent intent = new Intent(activity, ChatActivity.class);
+                intent.putExtra("roomId",data);
+                activity.startActivity(intent);
+                break;
         }
     }
 
     @Override
     public void firebaseDatabaseResultListener(MyFirebaseDatabase.ListenerInfo info, boolean result) {
+        switch (info){
+            case lockRoomResult:
+                if(result){
+                    Toast.makeText(activity, "部屋をロックしました", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(activity, "部屋ロックに失敗しました", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case enterRoomFail:
+                Toast.makeText(activity,"部屋入室に失敗しました", Toast.LENGTH_SHORT).show();
+                break;
+            case createRoom:
+                if(!result) {
+                    Toast.makeText(activity,"部屋生成に失敗しました",Toast.LENGTH_LONG).show();
+                }
+                break;
+            case deleteRoom:
+                if(result){
+                    Toast.makeText(activity,"部屋を消去しました",Toast.LENGTH_SHORT).show();
+                    activity.finish();
+                }else{
+                    Toast.makeText(activity,"部屋消去に失敗しました",Toast.LENGTH_SHORT).show();
+                }
+
+        }
 
     }
 
@@ -119,8 +153,14 @@ public class RoomManagementController implements FirebaseListener{
                         }
                         ((RoomManagementActivity) activity).addDataToAdapter(dataForListView);
                     }
-
-        }
+                }
+                break;
+            case getUserName:
+                if(activity instanceof RoomMemberListViewActivity){
+                    String userId = data.get("userId");
+                    String userName = data.get("userName");
+                    ((RoomMemberListViewActivity)activity).addAdapter(userId,userName);
+                }
 
 
         }

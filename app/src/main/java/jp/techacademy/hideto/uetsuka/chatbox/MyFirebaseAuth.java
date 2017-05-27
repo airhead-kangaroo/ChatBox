@@ -61,6 +61,7 @@ public class MyFirebaseAuth {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
+                    firebaseMediator.firebaseAuthCreateAccountListener(true);
                     auth.signInWithEmailAndPassword(mailAddress, password).addOnCompleteListener(getFirstLoginListener());
                 } else {
                     firebaseMediator.firebaseAuthCreateAccountListener(false);

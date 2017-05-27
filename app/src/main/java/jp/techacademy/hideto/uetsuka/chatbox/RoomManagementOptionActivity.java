@@ -1,5 +1,6 @@
 package jp.techacademy.hideto.uetsuka.chatbox;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -31,24 +32,31 @@ public class RoomManagementOptionActivity extends AppCompatActivity {
             deleteRoomBtn.setEnabled(false);
             lockRoomBtn.setEnabled(false);
             dragOutMemberBtn.setEnabled(false);
+            deleteRoomBtn.setVisibility(View.INVISIBLE);
+            lockRoomBtn.setVisibility(View.INVISIBLE);
+            dragOutMemberBtn.setVisibility(View.INVISIBLE);
             restartChatBtn.setEnabled(true);
         }
     }
 
     void deleteRoom(View v){
-        roomManagementController.deleteRoom(roomName, UserInfo.getUserId(this));
+        roomManagementController.deleteRoom(roomName);
     }
 
     void lockRoom(View v){
-
+        roomManagementController.lockRoom(roomName);
     }
 
-    void dragOutMember(){
-
+    void dragOutMember(View v){
+        Intent intent = new Intent(this, RoomMemberListViewActivity.class);
+        intent.putExtra("roomId", roomName);
+        startActivity(intent);
     }
 
     void reStartChat(View v){
-
+        Intent intent = new Intent(this, ChatActivity.class);
+        intent.putExtra("roomId", roomName);
+        startActivity(intent);
     }
 
 

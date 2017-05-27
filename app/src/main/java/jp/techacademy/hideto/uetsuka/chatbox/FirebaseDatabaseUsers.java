@@ -24,8 +24,11 @@ public class FirebaseDatabaseUsers extends MyFirebaseDatabase {
 
     public static final String FIREBASE_USERS_PATH = "users";
     public static final String FIREBASE_USERS_ROOMKEY = "rooms";
-    public static final String FIREBASE_USERS_ROOMMASTERKEY = "master";
-    public static final String FIREBASE_USERS_ROOMGUESTKEY = "guest";
+    public static final String FIREBASE_USERS_PROPERTYKEY = "property";
+    public static final String FIREBASE_USERS_NAMEKEY = "name";
+    public static final String FIREBASE_USERS_ROOMMASTER = "master";
+    public static final String FIREBASE_USERS_ROOMGUEST = "guest";
+    public enum PROPERTY{MASTER,GUEST}
     private String name;
     private Activity activity;
 
@@ -42,19 +45,24 @@ public class FirebaseDatabaseUsers extends MyFirebaseDatabase {
         userRef.setValue(data).addOnCompleteListener(getSaveValueListener());
     }
 
-    void getUserName(String userId){
-        DatabaseReference userRef = databaseReference.child(FIREBASE_USERS_PATH).child(userId);
-        userRef.addListenerForSingleValueEvent(getUserNameValueEventListener());
+    void getUserName(String roomId, String userId){
+        DatabaseReference userRef = databaseReference.child(FIREBASE_USERS_PATH).child(userId).child(FIREBASE_USERS_ROOMKEY).child(roomId);
+        userRef.addListenerForSingleValueEvent(getUserNameValueEventListener(userId));
     }
 
-    //todo: issuccesfulはリスナー登録でないとダメか確認し、必要であればリスナーを追加
-    boolean addRoom(String userId, String roomId){
+    void addRoom(String roomId, String userId, String userName, PROPERTY property){
         DatabaseReference userRoomRef = databaseReference.child(FIREBASE_USERS_PATH).child(userId).child(FIREBASE_USERS_ROOMKEY).child(roomId);
-        if(userRoomRef.setValue(FIREBASE_USERS_ROOMMASTERKEY).isSuccessful()){
-            return true;
-        }else {
-            return false;
+        Map<String, String> data = new HashMap<>();
+        switch (property){
+            case MASTER:
+                data.put(FIREBASE_USERS_PROPERTYKEY,FIREBASE_USERS_ROOMMASTER);
+                break;
+            case GUEST:
+                data.put(FIREBASE_USERS_ROOMKEY, FIREBASE_USERS_ROOMGUEST);
         }
+        data.put(FIREBASE_USERS_NAMEKEY, userName);
+        userRoomRef.setValue(data).addOnCompleteListener(getAddRoomListener(roomId));
+
     }
 
     void loadRoomsData(String userId){
@@ -62,9 +70,17 @@ public class FirebaseDatabaseUsers extends MyFirebaseDatabase {
         userRef.addChildEventListener(getLoadRoomsDataListener());
     }
 
-    void deleteRoom(String roomName, String UserId){
-        DatabaseReference userRef = databaseReference.child(FIREBASE_USERS_PATH).child(UserId).child(FIREBASE_USERS_ROOMKEY).child(roomName);
-        userRef.removeValue();
+    void deleteRoom(String roomId, String userId){
+        DatabaseReference userRef = databaseReference.child(FIREBASE_USERS_PATH).child(userId).child(FIREBASE_USERS_ROOMKEY).child(roomId);
+        userRef.removeValue().addOnCompleteListener(getRoomDeleteListener(roomId));
+    }
+
+    void enterRoom(String roomId, String userId,String userName){
+        DatabaseReference userRef = databaseReference.child(FIREBASE_USERS_PATH).child(userId).child(FIREBASE_USERS_ROOMKEY).child(roomId);
+        Map<String,String> data = new HashMap<>();
+        data.put(FIREBASE_USERS_NAMEKEY, userName);
+        data.put(FIREBASE_USERS_PROPERTYKEY, FIREBASE_USERS_ROOMGUEST);
+        userRef.setValue(data).addOnCompleteListener(getenterRoomResultListener(roomId));
     }
 
 
@@ -81,12 +97,50 @@ public class FirebaseDatabaseUsers extends MyFirebaseDatabase {
         };
     }
 
-    private ValueEventListener getUserNameValueEventListener(){
+    private OnCompleteListener getenterRoomResultListener(final String roomId){
+        return new OnCompleteListener() {
+            @Override
+            public void onComplete(@NonNull Task task) {
+                if(task.isSuccessful()){
+                    firebaseMediator.firebaseDatabaseUsersEneterRoomResultListener(true,roomId);
+                }else{
+                    firebaseMediator.firebaseDatabaseUsersEneterRoomResultListener(false, roomId);
+                }
+            }
+        };
+    }
+
+    private OnCompleteListener getAddRoomListener(final String roomId){
+        return new OnCompleteListener() {
+            @Override
+            public void onComplete(@NonNull Task task) {
+                if(task.isSuccessful()){
+                    firebaseMediator.firebaseDatabaseUsersAddRoomMemberListener(true, roomId);
+                }else{
+                    firebaseMediator.firebaseDatabaseUsersAddRoomMemberListener(false, roomId);
+                }
+            }
+        };
+    }
+
+    private OnCompleteListener getRoomDeleteListener(final String roomId){
+        return new OnCompleteListener() {
+            @Override
+            public void onComplete(@NonNull Task task) {
+                if(task.isSuccessful()){
+                    firebaseMediator.firebaseDatabaseUsersDeleteRoomListener(roomId);
+                }
+            }
+        };
+    }
+
+    private ValueEventListener getUserNameValueEventListener(final String userId){
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Map data = (HashMap)dataSnapshot.getValue();
-                firebaseMediator.firebaseDatabaseGetUserIdListener(data.get("name").toString());
+                HashMap data = (HashMap)dataSnapshot.getValue();
+                String userName = (String)data.get("name");
+                firebaseMediator.firebaseDatabaseGetUserNameListener(userId, userName);
             }
 
             @Override
@@ -100,9 +154,12 @@ public class FirebaseDatabaseUsers extends MyFirebaseDatabase {
         return new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Map<String, String> data = new HashMap<>();
-                data.put(dataSnapshot.getKey(), (String)dataSnapshot.getValue());
-                firebaseMediator.firebaseDatabaseLoadRoomsDataListener(data);
+                Map<String, String> loadData;
+                Map<String, String> sendData = new HashMap<>();
+                loadData = (HashMap)dataSnapshot.getValue();
+                String property = loadData.get("property");
+                sendData.put(dataSnapshot.getKey(), property);
+                firebaseMediator.firebaseDatabaseLoadRoomsDataListener(sendData);
             }
 
             @Override

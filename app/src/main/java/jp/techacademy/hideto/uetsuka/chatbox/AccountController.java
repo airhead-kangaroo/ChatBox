@@ -18,6 +18,7 @@ public class AccountController implements FirebaseListener{
 
     private Activity activity;
     private FirebaseMediator firebaseMediator;
+    private String name;
 
     AccountController(Activity activity){
         this.activity = activity;
@@ -61,22 +62,26 @@ public class AccountController implements FirebaseListener{
     }
 
     void createAccount(){
+        EditText nameField = (EditText)activity.findViewById(R.id.createAccountNameField);
+        String name = nameField.getText().toString();
         EditText mailAddressField = (EditText) activity.findViewById(R.id.createAccountMailField);
         String mailAddress = mailAddressField.getText().toString();
         EditText passwordField = (EditText) activity.findViewById(R.id.createAccountPasswordField);
         String password = passwordField.getText().toString();
         EditText passwordConfirmField = (EditText) activity.findViewById(R.id.createAccountConfirmPasswordField);
         String passwordConfirm = passwordConfirmField.getText().toString();
-        if(validatorEntryField(mailAddress,password,passwordConfirm)){
+        if(validatorEntryField(name,mailAddress,password,passwordConfirm)){
             firebaseMediator.createAccount(mailAddress,password);
+            this.name = name;
         }
 
 
 
     }
 
-    private boolean validatorEntryField(String mailAddress, String password, String confirmPassword){
+    private boolean validatorEntryField(String name, String mailAddress, String password, String confirmPassword){
         EntryFieldValidator validator = new EntryFieldValidator();
+        validator.isNameBlank(name);
         validator.isMailAddressBlank(mailAddress);
         validator.isPasswordTooShort(password);
         validator.isPasswordBlank(password);
@@ -128,9 +133,15 @@ public class AccountController implements FirebaseListener{
                     activity.startActivity(intent);
                     activity.finish();
                 }else{
-                    Toast.makeText(activity, "初回ログインに失敗しました",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "初回ログインに失敗しました。手動でログインしてください",Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case createAccount:
+                if(result){
+                    UserInfo.setUserName(activity,name);
+                }else{
+                    Toast.makeText(activity, "アカウント作成に失敗しました",Toast.LENGTH_SHORT).show();
+                }
         }
     }
 

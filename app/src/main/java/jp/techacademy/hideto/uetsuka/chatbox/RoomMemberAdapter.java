@@ -11,23 +11,23 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 /**
- * Created by Airhead-Kangaroo on 2017/05/21.
+ * Created by Airhead-Kangaroo on 2017/05/27.
  */
 
-public class RoomManagementAdapter extends BaseAdapter {
+public class RoomMemberAdapter extends BaseAdapter {
 
-    private ArrayList<RoomList> list;
+    private ArrayList<RoomMember> list;
     private Activity activity;
     private LayoutInflater inflater;
 
-    RoomManagementAdapter(Activity activity){
+    RoomMemberAdapter(Activity activity){
         this.activity = activity;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        list = new ArrayList<RoomList>();
+        list = new ArrayList<RoomMember>();
     }
 
-    void add(RoomList newList){
-        list.add(newList);
+    void add(RoomMember roomMember){
+        list.add(roomMember);
     }
 
     void clear(){
@@ -52,10 +52,10 @@ public class RoomManagementAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if(convertView == null){
-            convertView = inflater.inflate(R.layout.room_management_listview,parent,false);
+            convertView = inflater.inflate(R.layout.listview_room_user,parent,false);
         }
-        ((TextView)convertView.findViewById(R.id.roomManagementRoomName)).setText(list.get(position).getRoomName());
-        ((TextView)convertView.findViewById(R.id.roomManagementProperty)).setText(list.get(position).getRoomProperty());
+        ((TextView)convertView.findViewById(R.id.roomUserUserName)).setText(list.get(position).getUserName());
+        ((TextView)convertView.findViewById(R.id.roomUserUserId)).setText(list.get(position).getUserId());
         return convertView;
     }
 }

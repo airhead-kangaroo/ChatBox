@@ -7,28 +7,18 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/createRoomNotice"
-        android:layout_marginBottom="10dp"/>
-    <!--<EditText-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/createRoomName"-->
-        <!--android:hint="@string/roomName"/>-->
+        android:text="@string/enterRoomNotice"/>
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/createRoomId"
+        android:id="@+id/enterRoomRoomId"
         android:hint="@string/roomId"/>
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/createRoomToken"
+        android:id="@+id/enterRoomRoomToken"
         android:hint="@string/roomToken"/>
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/roomCapaity"
-        android:hint="@string/roomCapacity"
-        android:inputType="number"/>
 
 </LinearLayout>

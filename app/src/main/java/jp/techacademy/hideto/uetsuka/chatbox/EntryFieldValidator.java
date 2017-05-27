@@ -19,6 +19,10 @@ public class EntryFieldValidator {
         errorCount = 0;
     }
 
+    boolean isNameBlank(String name){
+        return isBlank(name, "アカウント名");
+    }
+
     boolean isMailAddressBlank(String mailAddress){
         return isBlank(mailAddress, "メールアドレス");
     }

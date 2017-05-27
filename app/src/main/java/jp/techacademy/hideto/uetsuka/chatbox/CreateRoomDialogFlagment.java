@@ -29,19 +29,15 @@ public class CreateRoomDialogFlagment extends DialogFragment {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                EditText roomNameField = (EditText)layout.findViewById(R.id.createRoomName);
+                                //EditText roomNameField = (EditText)layout.findViewById(R.id.createRoomName);
                                 EditText roomIdField = (EditText)layout.findViewById(R.id.createRoomId);
                                 EditText roomTokenField = (EditText)layout.findViewById(R.id.createRoomToken);
                                 EditText roomCapacityField = (EditText)layout.findViewById(R.id.roomCapaity);
-                                String roomName = roomNameField.getText().toString();
+                                //String roomName = roomNameField.getText().toString();
                                 String roomId = roomIdField.getText().toString();
                                 String roomToken = roomTokenField.getText().toString();
                                 String roomCapacity = roomCapacityField.getText().toString();
-                                roomManagementController.setRoomName(roomName);
-                                roomManagementController.setRoomId(roomId);
-                                roomManagementController.setRoomToken(roomToken);
-                                roomManagementController.setRoomCapacity(roomCapacity);
-                                roomManagementController.createRoom();
+                                roomManagementController.createRoom(roomId,roomToken,roomCapacity);
 
                             }
                         })

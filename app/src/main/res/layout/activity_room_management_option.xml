@@ -10,6 +10,13 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="@string/restartChat"
+        android:id="@+id/restartChat"
+        android:onClick="reStartChat"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/deleteRoom"
         android:id="@+id/deleteRoom"
         android:onClick="deleteRoom"/>
@@ -28,11 +35,6 @@
         android:id="@+id/dragOutMember"
         android:onClick="dragOutMember"/>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/restartChat"
-        android:id="@+id/restartChat"
-        android:onClick="reStartChat"/>
+
 
 </LinearLayout>

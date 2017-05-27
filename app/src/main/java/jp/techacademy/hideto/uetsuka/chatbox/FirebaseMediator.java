@@ -1,6 +1,7 @@
 package jp.techacademy.hideto.uetsuka.chatbox;
 
 import android.app.Activity;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -21,6 +22,7 @@ public class FirebaseMediator {
     private FirebaseListener firebaseListener;
     private FirebaseDatabaseUsers firebaseDatabaseUsers;
     private FirebaseDatabaseRoom firebaseDatabaseRoom;
+    public enum DELETE_MODE{INIT, AFTER_USER_DELETE};
 
     public static final String USERS_PATH = "users";
 
@@ -63,7 +65,9 @@ public class FirebaseMediator {
     }
 
     void firebaseAuthCreateAccountListener(boolean isSuccess){
-        if(!isSuccess){
+        if(isSuccess) {
+            firebaseListener.firebaseAuthListener(MyFirebaseAuth.ListenerInfo.createAccount, true);
+        }else{
             firebaseListener.firebaseAuthListener(MyFirebaseAuth.ListenerInfo.createAccount, false);
         }
     }
@@ -87,56 +91,62 @@ public class FirebaseMediator {
     //以下FirebaseDatabase系の処理
     //-------------------------------------------------------
 
-    void getUserName(String userId){
-        getFirebaseDatabaseUsers();
-        firebaseDatabaseUsers.getUserName(userId);
-    }
+    //------------[FirebaseDatabaseUser]の処理-----------------
 
-    void setUserName(String userName, String userId){
-        getFirebaseDatabaseUsers();
-        firebaseDatabaseUsers.saveUserData(userName,userId);
-    }
-
-    void createRoom(String roomName,String roomId,String roomToken, String roomCapacity){
-        getFirebaseDatabaseRoom();
-        firebaseDatabaseRoom.createRoom(roomName,roomId,roomToken, roomCapacity);
-    }
-
-    //todo: room側にもメンバー追加処理
-    boolean addRoom(String userId, String roomId){
-        getFirebaseDatabaseUsers();
-        if(firebaseDatabaseUsers.addRoom(userId,roomId)){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-    void addMember(String userId, String roomId){
-        getFirebaseDatabaseRoom();
-        firebaseDatabaseRoom.addMember(userId,roomId);
-    }
-
-    void addMember(String userId, String roomId, String roomToken){
-        getFirebaseDatabaseRoom();
-        firebaseDatabaseRoom.addMember(userId,roomId,roomToken);
-    }
 
     void loadRoomsData(String userId){
         getFirebaseDatabaseUsers();
         firebaseDatabaseUsers.loadRoomsData(userId);
     }
 
-    void deleteRoom(String roomName, String UserId){
+    void createRoom(String roomId,String roomToken, String roomCapacity, String userId, String userName){
         getFirebaseDatabaseRoom();
-        firebaseDatabaseRoom.deleteRoom(roomName);
-        getFirebaseDatabaseUsers();
-        firebaseDatabaseUsers.deleteRoom(roomName, UserId);
+        firebaseDatabaseRoom.createRoom(roomId,roomToken, roomCapacity, userId, userName);
     }
 
+    //todo: room側にもメンバー追加処理
+    void addRoom(String userId, String roomId, String userName){
+        getFirebaseDatabaseUsers();
+        firebaseDatabaseUsers.addRoom(roomId,userId,userName, FirebaseDatabaseUsers.PROPERTY.GUEST);
+    }
 
-    void firebaseDatabaseGetUserIdListener(String data){
-        firebaseListener.firebaseDataBaseListener(MyFirebaseDatabase.ListenerInfo.getUserName, data);
+    //------------[FirebaseDatabaseRoom]の処理-----------------
+
+
+    void deleteRoom(String roomId, DELETE_MODE mode){
+        if(mode == DELETE_MODE.INIT){
+            getFirebaseDatabaseRoom();
+            firebaseDatabaseRoom.deleteRoom(roomId, DELETE_MODE.INIT);
+        }else if(mode == DELETE_MODE.AFTER_USER_DELETE){
+            getFirebaseDatabaseRoom();
+            firebaseDatabaseRoom.deleteRoom(roomId, DELETE_MODE.AFTER_USER_DELETE);
+        }
+
+    }
+
+    void lockRoom(String roomId){
+        getFirebaseDatabaseRoom();
+        firebaseDatabaseRoom.lockRoom(roomId);
+    }
+
+    void enterRoom(String roomId, String roomToken, String userId, String userName){
+        getFirebaseDatabaseRoom();
+        firebaseDatabaseRoom.enterRoom(roomId,roomToken,userId, userName);
+    }
+
+    void getUserList(String roomId){
+        getFirebaseDatabaseRoom();
+        firebaseDatabaseRoom.getUserList(roomId);
+    }
+
+    //------------[FirebaseDatabase]のリスナー処理-----------------
+
+
+    void firebaseDatabaseGetUserNameListener(String userId, String userName){
+        HashMap<String, String> data = new HashMap<>();
+        data.put("userId", userId);
+        data.put("userName", userName);
+        firebaseListener.firebaseDataBaseHashmapListener(MyFirebaseDatabase.ListenerInfo.getUserName, data);
     }
 
     void firebaseDatabaseSetUserNameListener(boolean isSuccess){
@@ -147,11 +157,12 @@ public class FirebaseMediator {
         }
     }
 
-    void firebaseDatabaseCreateRoomListener(boolean isSuccess, String roomId){
+    void firebaseDatabaseCreateRoomListener(boolean isSuccess, String roomId, String userId, String userName){
         if(isSuccess){
-            firebaseListener.firebaseDataBaseListener(MyFirebaseDatabase.ListenerInfo.createRoom, roomId);
+            getFirebaseDatabaseUsers();
+            firebaseDatabaseUsers.addRoom(roomId, userId, userName, FirebaseDatabaseUsers.PROPERTY.MASTER);
         }else{
-            firebaseListener.firebaseDataBaseListener(MyFirebaseDatabase.ListenerInfo.createRoom, null);
+            firebaseListener.firebaseDatabaseResultListener(MyFirebaseDatabase.ListenerInfo.createRoom, false);
         }
     }
 
@@ -159,6 +170,69 @@ public class FirebaseMediator {
         firebaseListener.firebaseDataBaseHashmapListener(MyFirebaseDatabase.ListenerInfo.loadRoomsData,data);
     }
 
+    void firebaseDatabaseLockRoomListener(boolean isSuccess){
+        if(isSuccess){
+
+            firebaseListener.firebaseDatabaseResultListener(MyFirebaseDatabase.ListenerInfo.lockRoomResult,true);
+        }else{
+            firebaseListener.firebaseDatabaseResultListener(MyFirebaseDatabase.ListenerInfo.lockRoomResult,false);
+        }
+    }
+
+    void firebaseDatabaseRoomEnterRoomListener(String roomId, String userId, String userName){
+            getFirebaseDatabaseUsers();
+            firebaseDatabaseUsers.enterRoom(roomId,userId,userName);
+    }
+
+    void firebaseDatabaseUsersEneterRoomResultListener(boolean isSuccess, String roomId){
+        if(isSuccess){
+            firebaseListener.firebaseDataBaseListener(MyFirebaseDatabase.ListenerInfo.enterRoomSuccess,roomId);
+        }else{
+            firebaseListener.firebaseDatabaseResultListener(MyFirebaseDatabase.ListenerInfo.enterRoomFail,false);
+        }
+    }
+
+    void firebaseDatabaseEnterRoomFailuerListener(String message){
+        firebaseListener.firebaseDataBaseListener(MyFirebaseDatabase.ListenerInfo.enterRoomFail, message);
+    }
+
+    void firebaseDatabaseUserIdForDeleteRoomListener(String roomId, String userId){
+        if(userId != null || roomId != "" || roomId.length() != 0){
+            getFirebaseDatabaseUsers();
+            firebaseDatabaseUsers.deleteRoom(roomId, userId);
+        }
+    }
+
+    void firebaseDatabaseUsersDeleteRoomListener(String roomId){
+        getFirebaseDatabaseRoom();
+        firebaseDatabaseRoom.deleteRoom(roomId,DELETE_MODE.AFTER_USER_DELETE);
+    }
+
+    void firebaseDatabaseUsersAddRoomMemberListener(boolean isSuccess, String roomId){
+        if(isSuccess){
+            firebaseListener.firebaseDataBaseListener(MyFirebaseDatabase.ListenerInfo.createRoom, roomId);
+        }else{
+            firebaseListener.firebaseDataBaseListener(MyFirebaseDatabase.ListenerInfo.createRoom, null);
+        }
+    }
+
+    void firebaseDatabaseRoomDeleteCompleteListener(boolean isSuccess){
+        if(isSuccess){
+            firebaseListener.firebaseDatabaseResultListener(MyFirebaseDatabase.ListenerInfo.deleteRoom, true);
+        }else{
+            firebaseListener.firebaseDatabaseResultListener(MyFirebaseDatabase.ListenerInfo.deleteRoom, false);
+        }
+    }
+
+    void firebaseDatabaseGetUserListListener(String roomId,String userId){
+        getFirebaseDatabaseUsers();
+        firebaseDatabaseUsers.getUserName(roomId, userId);
+    }
+
+
+    //-------------------------------------------------------
+    //以下インスタンス取得のための処理
+    //-------------------------------------------------------
 
     private void getFirebaseDatabaseUsers(){
         if(firebaseDatabaseUsers == null){
@@ -171,4 +245,6 @@ public class FirebaseMediator {
             firebaseDatabaseRoom = new FirebaseDatabaseRoom(this);
         }
     }
+
+
 }
