@@ -31,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
         accountController = new AccountController(this);
         accountController.checkLoginState();
 
+        Intent intent = new Intent(this, CheckChatService.class);
+        startService(intent);
+
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
 //            @Override

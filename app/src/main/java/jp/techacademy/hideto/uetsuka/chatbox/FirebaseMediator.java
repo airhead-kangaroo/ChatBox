@@ -22,6 +22,7 @@ public class FirebaseMediator {
     private FirebaseListener firebaseListener;
     private FirebaseDatabaseUsers firebaseDatabaseUsers;
     private FirebaseDatabaseRoom firebaseDatabaseRoom;
+    private FirebaseDatabaseChat firebaseDatabaseChat;
     public enum DELETE_MODE{INIT, AFTER_USER_DELETE};
 
     public static final String USERS_PATH = "users";
@@ -139,6 +140,39 @@ public class FirebaseMediator {
         firebaseDatabaseRoom.getUserList(roomId);
     }
 
+
+    //------------[FirebaseDatabaseChat]の処理-----------------
+
+    void addMessage(String roomId, String userId, String userName,String conversation, String date){
+        getFirebaseDatabaseChat();
+        firebaseDatabaseChat.addMessage(roomId,userId,userName,conversation, date);
+    }
+
+    void loadConversation(String roomId){
+        getFirebaseDatabaseChat();
+        firebaseDatabaseChat.loadConversation(roomId);
+    }
+
+
+    //[FirebaseDatabaseChat]のListener処理
+
+    void addMessageChatListener(boolean isSuccess){
+        if(isSuccess){
+            firebaseListener.firebaseDatabaseResultListener(MyFirebaseDatabase.ListenerInfo.addChat, true);
+        }else{
+            firebaseListener.firebaseDatabaseResultListener(MyFirebaseDatabase.ListenerInfo.addChat, false);
+        }
+    }
+
+    void loadChatListener(HashMap data){
+        firebaseListener.firebaseDataBaseHashmapListener(MyFirebaseDatabase.ListenerInfo.loadChat,data);
+    }
+
+
+
+
+
+
     //------------[FirebaseDatabase]のリスナー処理-----------------
 
 
@@ -243,6 +277,12 @@ public class FirebaseMediator {
     private void getFirebaseDatabaseRoom(){
         if(firebaseDatabaseRoom == null){
             firebaseDatabaseRoom = new FirebaseDatabaseRoom(this);
+        }
+    }
+
+    private void getFirebaseDatabaseChat(){
+        if(firebaseDatabaseChat == null){
+            firebaseDatabaseChat = new FirebaseDatabaseChat(this);
         }
     }
 
